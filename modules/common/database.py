@@ -21,4 +21,38 @@ class Database:
         query = f"SELECT address, city, postalCode, country FROM customers WHERE name = '{name}'" 
         self.cursor.execute(query)
         record = self.cursor.fetchall()
-        return record          
+        return record 
+      
+
+    def update_product_qnt_by_id(self, product_id, qnt):
+        query = f"UPDATE products Set quantity = {qnt} WHERE id = {product_id}"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def select_product_qnt_by_id(self, product_id):
+        query = f"SELECT quantity From products  WHERE id = {product_id}"
+        self.cursor.execute(query)
+        record = self.cursor.fetchall()
+    
+        return record 
+
+    def insert_product(self, product_id, name, description, qnt):
+        query = f"INSERT OR REPLACE INTO products (id, name, description, quantity) \
+            VALUES ({product_id}, '{name}', '{description}', {qnt})"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def delete_product_by_id(self, product_id):
+        query = f"DELETE FROM products WHERE id = {product_id}"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def get_detailed_orders(self):
+        query = "SELECT orders.id, customer.name, products.name, \
+            products.description, orders.order_date \
+                FROM orders \
+                    JOIN customers ON orders.customer_id = customer.id \
+                        JOIN products ON orders.product_id = products.id"
+        self.cursor.execute(query)
+        record = self.cursor.fetchall()
+        return record
